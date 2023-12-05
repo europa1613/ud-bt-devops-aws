@@ -15,19 +15,19 @@ import com.bharath.springcloud.repos.CouponRepo;
 @RequestMapping("/couponapi")
 public class CouponRestController {
 
-	@Autowired
-	CouponRepo repo;
+    @Autowired
+    CouponRepo repo;
 
-	@RequestMapping(value = "/coupons", method = RequestMethod.POST)
-	public Coupon create(@RequestBody Coupon coupon) {
+    @RequestMapping(value = "/coupons", method = RequestMethod.POST)
+    public Coupon create(@RequestBody Coupon coupon) {
 
-		return repo.save(coupon);
+        return repo.save(coupon);
 
-	}
+    }
 
-	@RequestMapping(value = "/coupons/{code}", method = RequestMethod.GET)
-	public Coupon getCoupon(@PathVariable("code") String code) {
-		return repo.findByCode(code);
+    @RequestMapping(value = "/coupons/{code}", method = RequestMethod.GET)
+    public Coupon getCoupon(@PathVariable("code") String code) {
+        return repo.findByCode(code);
 
-	}
+    }
 }
