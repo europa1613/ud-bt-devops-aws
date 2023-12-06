@@ -178,3 +178,68 @@ stress --cpu 1
 ```
 
 
+## Docker
+
+```bash
+yum install docker -y
+docker --version
+docker info # docker daemon not started;Cannot connect to docker to Docker Daemon message
+
+service docker start
+docker info # should work now
+
+docker images # list downloaded images
+
+docker run hello-world
+
+docker run -it ubuntu bash
+# -it: i = interactive, t = launch terminal
+
+docker pull mysql:5.7
+
+
+docker run -i -d -t -p 80:80 nginx
+docker run -idt -p 80:80 nginx #same as above, combined the -itd options
+# -i interactive
+# -d detached
+# -t terminal
+# -p publish - host-port:container-port
+
+docker ps # docker process status
+
+docker stop <container id> # stop a running container
+docker start <container id> # start a stopped container
+
+
+docker info # gives info on images and containers - current state
+
+# clean up
+docker ps -a # list all the containers available, including stopped
+
+# Deleting containers
+docker rm <container id> # to delete a stopped container
+docker rm <container id 1> <container id 2>  # to delete a multiple stopped containers
+docker rm -f <container id> # to forcefully delete a running container
+
+#Deleting images
+docker rmi <image id(s)> # spaced image id, command: `docker images`
+
+```
+
+### More Commands
+```sh
+docker run -dit nginx
+docker ps
+docker run -itd nginx # launches another container 
+
+# To change the container name
+docker run -itd --name=mycontainer nginx # image name must always be at the end
+docker stop <container name> # can use container name or id to start or stop 
+
+docker run -itd --name=mynginx -p 8000:80 nginx 
+
+docker restart <container name/id>
+docker pause <container name/id>
+docker unpause <container name/id>
+
+```
