@@ -1,8 +1,8 @@
 SHOW DATABASES;
-CREATE DATABASE mydb;
-USE mydb;
 SHOW TABLES;
 
+
+CREATE DATABASE mydb;
 USE mydb;
 
 CREATE TABLE product (
