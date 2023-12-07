@@ -440,3 +440,78 @@ docker network connect bridge mycustom-buntu
 docker inspect mycustom-buntu # now network and ip are listed  
 
 ```
+
+### First Dockerfile
+```sh
+[root@ip-172-31-18-126 ~]# nano Dockerfile
+[root@ip-172-31-18-126 ~]# cat Dockerfile
+FROM centos
+RUN yum install -y httpd
+ADD index.html /var/www/html
+CMD apachectl -D FOREGROUND
+EXPOSE 80
+MAINTAINER arvind
+ENV myenv myval
+
+
+[root@ip-172-31-18-126 ~]# echo "<h1>First Dockerfile</h1>" > index.html
+[root@ip-172-31-18-126 ~]# docker build -t my-docfile-webserver .
+    => ERROR [2/3] RUN yum install -y httpd                                                                                                                                            1.8s
+    ------
+    > [2/3] RUN yum install -y httpd:
+    1.724 CentOS Linux 8 - AppStream                      193  B/s |  38  B     00:00
+    1.736 Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+    ------
+    Dockerfile:2
+    --------------------
+    1 |     FROM centos
+    2 | >>> RUN yum install -y httpd
+    3 |     ADD index.html /var/www/html
+    4 |     CMD apachectl -D FOREGROUND
+    --------------------
+    ERROR: failed to solve: process "/bin/sh -c yum install -y httpd" did not complete successfully: exit code: 1
+
+# Change Docker file like below
+
+[root@ip-172-31-18-126 ~]# cat Dockerfile
+FROM centos
+
+RUN cd /etc/yum.repos.d/
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+
+RUN yum install -y httpd
+
+ADD index.html /var/www/html
+CMD apachectl -D FOREGROUND
+EXPOSE 80
+
+MAINTAINER arvind
+ENV myenv myval
+
+docker build -t my-docfile-webserver . # successful
+
+#to see how the image is created
+docker history my-docfile-webserver 
+
+```
+
+#### Updating Image and Publish to DockerHub
+```sh
+vi Dockerfile
+# append env variable
+ENV myenv2 myval2
+#rebuild image
+docker build -t my-docfile-webserver . 
+# much faster, docker uses cache for existing ones and adds the updates as layers
+
+#tag for push with docker hub's usernames
+docker tag my-docfile-webserver arvindrukmaji/my-docfile-webserver
+
+docker login
+#enter credentials username: arvindrukmaji
+
+docker push arvindrukmaji/my-docfile-webserver
+
+```

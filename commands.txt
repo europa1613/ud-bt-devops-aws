@@ -1,0 +1,15 @@
+yum install -y mariadb-server
+
+systemctl enable mariadb
+
+systemctl start mariadb
+
+mysql_secure_installation
+
+mysql -uroot -p
+
+---------Java-----------
+
+yum install java-1.8.0-openjdk
+
+alternatives --config java
