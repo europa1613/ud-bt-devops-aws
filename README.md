@@ -241,5 +241,125 @@ docker run -itd --name=mynginx -p 8000:80 nginx
 docker restart <container name/id>
 docker pause <container name/id>
 docker unpause <container name/id>
+```
+
+### `docker commit`
+
+```sh
+
+# not recommended, but for quick sharing of images 
+# Dockerfile is the recommended way
+docker commit <container-id> <image-name>
+
+docker pull ubuntu
+
+docker run -dit ubuntu
+docker ps
+
+#exec - execute on the container; below bash interactive terminal
+docker exec -it <container-id> bash
+
+# in the container
+    apt-get update
+    apt-get install apache2
+
+    service apache2 status
+    service apache2 start
+    mkdir demo
+#back to host machine
+docker ps # find the container id
+docker commit <container-id> myapache2-buntu
+
+docker imagess
+
+docker run -dit --name=myweb myapache2-buntu
+docker exec -it myweb bash
+
+```
+
+### Docker Layers and Overlay
+```sh
+docker history <image-name> # list all layer of an image 
+
+docker info # look for Docker Root Directory in the output
+# usually
+# Docker Root Dir: /var/lib/docker
+
+cd /var/lib/docker
+ls
+cd overlay2 # from docker v17 overlay2
+
+```
+**Overlay** is the storage driver of docker
+
+### Launch MySQL Container
+```sh
+docker run -d -p 6666:3306 --name=docker-mysql --env="MYSQL_ROOT_PASSWORD=test1234" --env="MYSQL_DATABASE=emp" mysql
+docker run -d -p 6666:3306 --name arvins-mysql -e "MYSQL_ROOT_PASSWORD=test12345" -e "MYSQL_DATABASE=EMP" mysql
+
+docker exec -it docker-mysql bash
+docker exec -it arvins-mysql bash
+
+mysql -uroot -p 
+test12345
+mysql> show databases;
+
+mysql> show tables; 
+
+```
+
+
+### Bind Mounts & Volumes
+**Bind Mounts**
+- Any folder on the host machine for docker container to store data
+- Not managed by docker
+- `docker run -dit -v /root/mydata/:/mytemp ubuntu`
+```sh
+#host
+mkdir mydata
+docker run -dit -v /root/mydata/:/mytemp ubuntu
+
+docker ps
+docker exec -it a47eaa16f144 bash
+
+#container
+root@a47eaa16f144:/# cd mytemp/
+root@a47eaa16f144:/mytemp# echo "Hello from container bound mount" > 1.txt
+root@a47eaa16f144:/mytemp# cat 1.txt
+Hello from container bound mount
+root@a47eaa16f144:/mytemp# exit
+exit
+[root@ip-172-31-18-126 ~]# cat mydata/1.txt
+Hello from container bound mount
+
+```
+**Volumes**
+- Volumes are created and managed by docker
+- Created in /var/lib/docker/volumes on the host machine
+- Recommened over Bind mounts
+- `docker run -dit --mount source=myvol,destination=/mytemp nginx`
+```sh
+docker volume ls
+docker volume create myvol
+ls /var/lib/docker/volumes/myvol/_data/ # has _data folder created
+
+docker run -dit --mount source=myvol,destination=/mytemp nginx
+docker ps
+docker exec -it f033965c5139 bash
+root@f033965c5139:/# cd mytemp/
+root@f033965c5139:/mytemp# touch 1.txt 2.txt 3.txt
+# exit container
+[root@ip-172-31-18-126 ~]# ls /var/lib/docker/volumes/myvol/_data/
+1.txt  2.txt  3.txt
+
+# host
+[root@ip-172-31-18-126 ~]# echo "Hello from host machine" > /var/lib/docker/volumes/myvol/_data/4.txt
+[root@ip-172-31-18-126 ~]# ls /var/lib/docker/volumes/myvol/_data/
+1.txt  2.txt  3.txt  4.txt
+
+# container
+[root@ip-172-31-18-126 ~]# docker exec -it f033965c5139 bash
+root@f033965c5139:/# cat mytemp/4.txt
+Hello from host machine
 
 ```
