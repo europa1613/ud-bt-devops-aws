@@ -363,3 +363,80 @@ root@f033965c5139:/# cat mytemp/4.txt
 Hello from host machine
 
 ```
+
+### Docker Networking
+
+```sh
+docker network ls
+    NETWORK ID     NAME      DRIVER    SCOPE
+    00de7df35883   bridge    bridge    local
+    eecd35cdb780   host      host      local
+    626a4c92346d   none      null      local
+
+docker network inspect bridge
+
+#create network
+docker network create demo-nw --subnet=172.20.0.0/16
+4aeb2fd4b554658c9d2a809abcfec3dc148f9c034d86eb42b1cc61cfb0aa517b
+
+docker network ls
+    NETWORK ID     NAME      DRIVER    SCOPE
+    00de7df35883   bridge    bridge    local
+    4aeb2fd4b554   demo-nw   bridge    local # <==
+    eecd35cdb780   host      host      local
+    626a4c92346d   none      null      local
+
+```
+#### Launch ubuntu on custom network, IP & hostname(-h)
+```sh
+docker run --name mycustom-buntu --net demo-nw --ip 172.20.0.2 -h mycustom.buntu.com -it -p 82:80  ubuntu bash
+#Container
+root@mycustom:/# hostname
+mycustom.buntu.com
+
+root@mycustom:/# hostname -I
+172.20.0.2
+
+# ctrl + p + q to exit out of container without killing it
+docker attach mycustom-buntu
+
+```
+
+#### Disconnet and Join networks
+```sh
+docker inspect mycustom-buntu
+    "Networks": {
+                    "demo-nw": {
+                        "IPAMConfig": {
+                            "IPv4Address": "172.20.0.2"
+                        },
+                        "Links": null,
+                        "Aliases": [
+                            "60074ee2f476",
+                            "mycustom.buntu.com"
+                        ],
+                        "NetworkID": "4aeb2fd4b554658c9d2a809abcfec3dc148f9c034d86eb42b1cc61cfb0aa517b",
+                        "EndpointID": "59b5e02f7120c286e50b16e912035006a193e0e7abf9274d0aceb8e807b1705c",
+                        "Gateway": "172.20.0.1",
+                        "IPAddress": "172.20.0.2",
+                        "IPPrefixLen": 16,
+                        "IPv6Gateway": "",
+                        "GlobalIPv6Address": "",
+                        "GlobalIPv6PrefixLen": 0,
+                        "MacAddress": "02:42:ac:14:00:02",
+                        "DriverOpts": null
+                    }
+                }
+            }
+        }
+    ]
+
+#disconnect from a network
+docker network disconnect demo-nw mycustom-buntu
+docker inspect mycustom-buntu #Network setting details are removed
+
+# connecting to a network
+docker network connect bridge mycustom-buntu
+docker inspect mycustom-buntu # now network and ip are listed  
+
+```
