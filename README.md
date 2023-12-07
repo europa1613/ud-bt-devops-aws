@@ -504,6 +504,7 @@ vi Dockerfile
 ENV myenv2 myval2
 #rebuild image
 docker build -t my-docfile-webserver . 
+# -t or --tag 
 # much faster, docker uses cache for existing ones and adds the updates as layers
 
 #tag for push with docker hub's usernames
@@ -513,5 +514,74 @@ docker login
 #enter credentials username: arvindrukmaji
 
 docker push arvindrukmaji/my-docfile-webserver
+
+```
+
+
+### Dockerize Apps
+
+#### MYSQL
+```sh
+docker run -d -p 6666:3306 --name docker-mysql --env="MYSQL_ROOT_PASSWORD=r0oT1727" --env="MYSQL_DATABASE=mydb" mysql
+
+docker exec -it docker-mysql bash
+
+bash-4.4# mysql -uroot -p
+mysql>show databases;
+
+# Another Terminal:
+docker exec -i docker-mysql mysql -uroot -pr0oT1727 mydb < tables.sql
+```
+
+#### couponservice
+```sh
+#change datasource to docker 
+spring.datasource.url=jdbc:mysql://docker-mysql:3306/mydb
+
+# Dockerfile
+FROM amazoncorretto:8
+ADD target/couponservice-0.0.1-SNAPSHOT.jar couponservice-0.0.1-SNAPSHOT.jar
+ENTRYPOINT [ "java","-jar","couponservice-0.0.1-SNAPSHOT.jar" ]
+
+mvn install -DskipTests=true
+
+docker build -f Dockerfile -t coupon_app .
+
+docker run -t --name=coupon-app --link docker-mysql:mysql -p 10555:9091 coupon_app
+
+```
+
+#### productservice
+```sh
+#change datasource to docker 
+spring.datasource.url=jdbc:mysql://docker-mysql:3306/mydb
+
+# change host to coupon-app 
+couponService.url=http://coupon-app:9091/couponapi/coupons/
+
+# Dockerfile
+FROM amazoncorretto:8
+ADD target/productservice-0.0.1-SNAPSHOT.jar productservice-0.0.1-SNAPSHOT.jar
+ENTRYPOINT [ "java","-jar","productservice-0.0.1-SNAPSHOT.jar" ]
+
+mvn install -DskipTests=true
+
+docker build -f Dockerfile -t product_app .
+
+docker run -t --name=product-app --link docker-mysql:mysql --link coupon-app:coupon_app -p 10666:9090 product_app
+
+```
+
+#### Tag and push to docker hub
+```sh
+docker tag coupon_app arvindrukmaji/couponservice
+docker tag product_app arvindrukmaji/productservice
+
+
+docker login
+#enter credentials username: arvindrukmaji
+
+docker push arvindrukmaji/couponservice
+docker push arvindrukmaji/productservice
 
 ```
