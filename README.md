@@ -587,3 +587,54 @@ docker system prune # VERY CAREFUL while doing this
 docker volume prune # remove dangling volumes
 
 ```
+## Docker Compose
+```sh
+#Example yml
+version: '3'
+services:
+  web:
+    image: httpd
+    container_name: mywebserver
+    ports:
+      - "8080:80"
+
+docker-compose up # if the yml is named docker-compose.yml
+docker-compose -f <yml> up -d # -d to run detached/background
+
+docker-compose ps # view running containers
+
+docker-compose stop # if in the directory where the compose yml is
+docker-compose down # if in the directory where the compose yml is
+
+docker-compose stop <service-name>
+docker-compose stop web # see above services: web; not the container_name
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

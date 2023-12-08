@@ -1,0 +1,7 @@
+version: '3'
+services:
+  web:
+    image: httpd
+    container_name: mywebserver
+    ports:
+      - "8080:80"
