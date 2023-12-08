@@ -611,7 +611,7 @@ docker-compose stop web # see above services: web; not the container_name
 ```
 
 ### Docker Compose Network
-```sh
+```yml
 version: '3'
 services:
   web:
@@ -629,6 +629,31 @@ networks:
 
 ```
 
+### Docker compose - mysql 
+```yml
+version: '3'
+services:
+  docker-mysql:
+    container_name: docker-mysql
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=mydb
+      - MYSQL_ROOT_PASSWORD=r0oT1727
+      - MYSQL_ROOT_HOST=%
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    ports:
+      - "6666:3306"
+    healthcheck:
+      test: "usr/bin/mysql --user=root --password=r0oT1727 --execute \"show databases\""
+      interval: 5s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+
+```
 
 
 
