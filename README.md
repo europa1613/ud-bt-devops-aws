@@ -133,7 +133,6 @@ sudo systemctl enable rc-local.service
 # https://www.udemy.com/course/devops-tools-and-aws-for-java-microservice-developers/learn/lecture/14183053/#questions/12956744
 
 # https://www.udemy.com/course/devops-tools-and-aws-for-java-microservice-developers/learn/lecture/14183053/#questions/13531692
-
 ```
 
 ### Use crontab instead
@@ -162,7 +161,6 @@ crontab -e
 
 # Add below
 @reboot java -jar /home/ec2-user/couponservice-0.0.1-SNAPSHOT.jar
-
 ```
 
 
@@ -174,7 +172,6 @@ yum install stress -y
 
 #100% load
 stress --cpu 1 
-
 ```
 
 
@@ -223,7 +220,6 @@ docker rm -f <container id> # to forcefully delete a running container
 
 #Deleting images
 docker rmi <image id(s)> # spaced image id, command: `docker images`
-
 ```
 
 ### More Commands
@@ -246,7 +242,6 @@ docker unpause <container name/id>
 ### `docker commit`
 
 ```sh
-
 # not recommended, but for quick sharing of images 
 # Dockerfile is the recommended way
 docker commit <container-id> <image-name>
@@ -274,7 +269,6 @@ docker imagess
 
 docker run -dit --name=myweb myapache2-buntu
 docker exec -it myweb bash
-
 ```
 
 ### Docker Layers and Overlay
@@ -288,7 +282,6 @@ docker info # look for Docker Root Directory in the output
 cd /var/lib/docker
 ls
 cd overlay2 # from docker v17 overlay2
-
 ```
 **Overlay** is the storage driver of docker
 
@@ -305,9 +298,7 @@ test12345
 mysql> show databases;
 
 mysql> show tables; 
-
 ```
-
 
 ### Bind Mounts & Volumes
 **Bind Mounts**
@@ -331,7 +322,6 @@ root@a47eaa16f144:/mytemp# exit
 exit
 [root@ip-172-31-18-126 ~]# cat mydata/1.txt
 Hello from container bound mount
-
 ```
 **Volumes**
 - Volumes are created and managed by docker
@@ -361,7 +351,6 @@ root@f033965c5139:/mytemp# touch 1.txt 2.txt 3.txt
 [root@ip-172-31-18-126 ~]# docker exec -it f033965c5139 bash
 root@f033965c5139:/# cat mytemp/4.txt
 Hello from host machine
-
 ```
 
 ### Docker Networking
@@ -438,7 +427,6 @@ docker inspect mycustom-buntu #Network setting details are removed
 # connecting to a network
 docker network connect bridge mycustom-buntu
 docker inspect mycustom-buntu # now network and ip are listed  
-
 ```
 
 ### First Dockerfile
@@ -494,7 +482,6 @@ docker build -t my-docfile-webserver . # successful
 
 #to see how the image is created
 docker history my-docfile-webserver 
-
 ```
 
 #### Updating Image and Publish to DockerHub
@@ -514,7 +501,6 @@ docker login
 #enter credentials username: arvindrukmaji
 
 docker push arvindrukmaji/my-docfile-webserver
-
 ```
 
 
@@ -548,7 +534,6 @@ mvn install -DskipTests=true
 docker build -f Dockerfile -t coupon_app .
 
 docker run -t --name=coupon-app --link docker-mysql:mysql -p 10555:9091 coupon_app
-
 ```
 
 #### productservice
@@ -569,7 +554,6 @@ mvn install -DskipTests=true
 docker build -f Dockerfile -t product_app .
 
 docker run -t --name=product-app --link docker-mysql:mysql --link coupon-app:coupon_app -p 10666:9090 product_app
-
 ```
 
 #### Tag and push to docker hub
@@ -583,5 +567,23 @@ docker login
 
 docker push arvindrukmaji/couponservice
 docker push arvindrukmaji/productservice
+```
+
+### Docker Prune
+- To remove any dangling images or containers
+```sh
+docker container prune
+docker image prune 
+docker image prune -a # remove all image
+
+
+docker rmi <image-id> 
+docker rm <container-id> 
+
+docker rmi <image-id>  -f # force remove
+docker rm <container-id> -f
+
+docker system prune # VERY CAREFUL while doing this
+docker volume prune # remove dangling volumes
 
 ```
