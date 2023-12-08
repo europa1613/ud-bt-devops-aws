@@ -608,11 +608,26 @@ docker-compose down # if in the directory where the compose yml is
 
 docker-compose stop <service-name>
 docker-compose stop web # see above services: web; not the container_name
-
-
-
 ```
 
+### Docker Compose Network
+```sh
+version: '3'
+services:
+  web:
+    image: httpd
+    container_name: mywebserver
+    networks:
+      - webnetwork
+    ports:
+      - "8080:80"
+networks:
+  webnetwork:
+    driver: bridge
+  dbnetwork:
+    driver: bridge
+
+```
 
 
 
