@@ -654,7 +654,20 @@ services:
 ```
 
 
+## Kubernetes
+```sh
+kubectl config view
 
+kubectl cluster-info
+  Kubernetes control plane is running at https://kubernetes.docker.internal:6443
+  CoreDNS is running at https://kubernetes.docker.internal:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+[39] → kubectl version
+  Client Version: v1.28.2
+  Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
+  Server Version: v1.28.2
+
+```
 
 
 
