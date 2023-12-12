@@ -864,13 +864,13 @@ mywebserver-78579c94fb-gtchd   1/1     Running   0          24s
 ```
 
 ### Services & Types
-- ClusterIP
-- NodePort
-- Loadbalancer
+- ClusterIP - Communicate within Cluster
+- NodePort - Expose and access outside
+- Loadbalancer - Integrate with External LBs
 
 **Others:**
-- External Name
-- Ingress
+- External Name - Access external services as if they're part of the same cluster. Like a DNS
+- Ingress - Expose lower level ports like 8080, 80 etc
 
 
 
