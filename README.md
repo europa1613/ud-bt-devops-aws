@@ -817,7 +817,7 @@ kubectl run demo --image=httpd -o yaml --export=true
 - https://krew.sigs.k8s.io/docs/user-guide/setup/install/
 ```sh
 kubectl krew install neat
-kubectl get pod mypod -o yaml | kubectl neat
+kubectl get pod mypod -o yaml | kubectl neat #examples
 kubectl run demo --image=httpd -o yaml | kubectl neat
 ```
 
@@ -827,13 +827,50 @@ kubectl explain pod
 kubectl explain pod.spec
 ```
 
+### Kubernetes Cluster Access
+- Web Dashboard
+  - https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+    ```sh
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    ```
+  -  Create a ServiceAccount for accessing the dashboard:
+    https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+  - Start proxy
+    ```sh
+    kubectl proxy
+    Starting to serve on 127.0.0.1:8001
+    ```
+- CLI
+- REST APIs
 
 
+### Kube Deployments
+```sh
+kubectl get deployments
 
+cd kuberneter/webserver
+kubectl create -f webserver.yml
 
+kubectl get deployments
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+mywebserver   2/2     2            2           5s
 
+kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+demo                           1/1     Running   0          129m
+mywebserver-78579c94fb-5k9hk   1/1     Running   0          24s
+mywebserver-78579c94fb-gtchd   1/1     Running   0          24s
 
+```
 
+### Services & Types
+- ClusterIP
+- NodePort
+- Loadbalancer
+
+**Others:**
+- External Name
+- Ingress
 
 
 

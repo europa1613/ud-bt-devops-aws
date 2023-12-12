@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebserver
+  labels:
+    app: httpd
+spec:
+  replicas: 2
+  selector: 
+    matchLabels: 
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+        - name: myhttpd
+          image: httpd
+          ports:
+            - containerPort: 80
+              
