@@ -7,6 +7,6 @@ spec:
   selector:
       app: httpd # must be the label of the pod this serive is going to group or selects the pods with this selector label
   ports:
-    - nodePort: 30123
+    - nodePort: 30123 #access from outside - localhost:30123
       port: 80
-      targetPort: 80
+      targetPort: 80 # container port
