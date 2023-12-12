@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: myhttpd
-          image: httpd
+          image: httpd:2
           ports:
             - containerPort: 80
               

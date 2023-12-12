@@ -872,6 +872,72 @@ mywebserver-78579c94fb-gtchd   1/1     Running   0          24s
 - External Name - Access external services as if they're part of the same cluster. Like a DNS
 - Ingress - Expose lower level ports like 8080, 80 etc
 
+### Rolling update
+```yml
+#webserver.yml - deployment
+spec:
+  replicas: 10 # <==== increase to 10
+  strategy: # <==== introduce strategy element
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 4
+
+# ----
+# ----
+# Pod/container spec
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+        - name: myhttpd
+          image: httpd:2 # <======= change version to 2
+```
+#### Perform rolling update
+```sh
+kubectl replace -f webserver.yml
+#---------------------------------------
+kubectl describe deployment mywebserver
+
+```
+
+### Rollbacks
+```sh
+kubectl rollout history deployment
+
+ [61] → kubectl rollout history deployment
+  deployment.apps/mywebserver
+  REVISION  CHANGE-CAUSE
+  1         <none>
+  2         <none>
+
+# find changes in a specific deployment revision
+kubectl rollout history deployment mywebserver --revision=2
+  deployment.apps/mywebserver with revision #2
+  Pod Template:
+    Labels:	app=httpd
+    pod-template-hash=547696cfc4
+    Containers:
+    myhttpd:
+      Image:	httpd:2
+      Port:	80/TCP
+      Host Port:	0/TCP
+      Environment:	<none>
+      Mounts:	<none>
+    Volumes:	<none>
+
+# Undo to a revision
+kubectl rollout undo deployment mywebserver --to-revision=1
+
+kubectl rollout --help
+```
+
+### Manual Scaling
+```sh
+kubectl scale deployment mywebserver --replicas=20
+```
 
 
 
