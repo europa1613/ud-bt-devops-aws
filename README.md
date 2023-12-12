@@ -574,7 +574,7 @@ docker push arvindrukmaji/productservice
 ```sh
 docker container prune
 docker image prune 
-docker image prune -a # remove all image
+docker image prune -a # remove all images
 
 
 docker rmi <image-id> 
@@ -669,6 +669,56 @@ kubectl cluster-info
 
 ```
 
+### First Pod
+```sh
+kubectl run firstpod --image=nginx
+kubectl get pods
+kubectl describe pod firstpod
+kubectl exec -it firstpod -- /bin/bash
+root@firstpod:/# apt-get update
+root@firstpod:/# apt-get install curl
+root@firstpod:/# curl localhost
+
+#delete pod
+kubectl delete pod firstpod
+
+kubectl run firstpod --image=nginx
+kubectl get pod firstpod -o yaml #get yaml output of the current state of the pod
+
+```
+#### Using YAML
+```yaml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: firstpod
+spec:
+  containers:
+    - name: web
+      image: httpd
+    - name: db
+      image: redis
+
+```
+#### Looking into the Pods
+
+```sh
+kubectl describe pods
+kubectl get pods
+
+kubectl exec -it firstpod --container db -- /bin/bash
+  root@firstpod:/data# #nothing to do in redis
+
+kubectl exec -it firstpod --container web -- /bin/bash
+  root@firstpod:/usr/local/apache2# apt-get update
+  root@firstpod:/usr/local/apache2# apt-get install
+  root@firstpod:/usr/local/apache2# curl localhost
+  <html><body><h1>It works!</h1></body></html>
+
+# delete using yml
+kubectl delete -f firstpod.yml
+
+```
 
 
 
