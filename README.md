@@ -720,7 +720,112 @@ kubectl delete -f firstpod.yml
 
 ```
 
+### Pod Phases (different from Status)
+- Pending
+- Running
+- Succeeded
+- Failed
+- Unknown
 
+### Labels and Selectors
+```sh
+kubectl get all --show-labels
+```
+#### Add `labels` under `metadata`
+```yml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: firstpod
+  labels:
+    app: fp
+    release: stable
+    team: red
+spec:
+  containers:
+    - name: web
+      image: httpd
+    - name: db
+      image: redis
+```
+#### Using `selector`: `--selector`
+- =, !=, in, notin, exists
+
+```sh
+kubectl get all --show-labels
+NAME           READY   STATUS              RESTARTS   AGE   LABELS
+pod/firstpod   0/2     ContainerCreating   0          3s    app=fp,release=stable,team=red
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE   LABELS
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   4d    component=apiserver,provider=kubernetes
+
+
+kubectl get all --selector="app=fp" # equal
+kubectl get all --selector="app!=fp" # not equal
+kubectl get all --selector="app in (fp)" # in
+kubectl get all --selector="app notin (fp)" # notin
+kubectl get all --selector="app=fp,team=red" # AND
+
+kubectl get all --selector=app # exists, no special keyword for command line
+
+```
+**Note: `exists` selector**
+Unfortunately, the `kubectl` command doesn't provide a direct "exists" selector option in the command line like in YAML manifests. However, using `--selector` with the key name itself effectively checks for the existence of that label key across resources
+```sh
+kubectl get all --selector=app
+``` 
+
+#### Annotations
+Just like labels, they are key-value pairs defined under metadata. Cannot be used to query for resources but used as information tagging, possibly by other tools.
+
+### Namespaces
+```sh
+kubectl get ns
+kubectl get namespaces
+
+kubectl create ns firstns
+
+kubectl create -f firstpod.yml --namespace firstns
+
+kubectl get pods # list from default namespace 
+
+ [99] → kubectl get pods --namespace firstns
+
+kubectl config view #namespace: default
+# set namespace 
+kubectl config set-context --current --namespace firstns
+
+kubectl config view #namespace: firstns
+```
+
+#### Dry run 
+```sh
+kubectl create -f firstpod.yml --dry-run=client
+[102] → kubectl create -f firstpod.yml --dry-run=client
+pod/firstpod created (dry run)
+```
+
+#### export(deprecated) from current pod
+```sh
+kubectl run demo --image=httpd -o yaml --export=true
+```
+#### Plugins `krew` &  `neat`
+- https://github.com/kubernetes-sigs/krew
+- https://github.com/itaysk/kubectl-neat
+
+**Install Krew and neat**
+- https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+```sh
+kubectl krew install neat
+kubectl get pod mypod -o yaml | kubectl neat
+kubectl run demo --image=httpd -o yaml | kubectl neat
+```
+
+#### explain
+```sh
+kubectl explain pod
+kubectl explain pod.spec
+```
 
 
 

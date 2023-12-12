@@ -2,6 +2,10 @@ kind: Pod
 apiVersion: v1
 metadata:
   name: firstpod
+  labels:
+    app: fp
+    release: stable
+    team: red
 spec:
   containers:
     - name: web
