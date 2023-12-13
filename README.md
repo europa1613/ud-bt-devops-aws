@@ -895,14 +895,12 @@ spec:
         - name: myhttpd
           image: httpd:2 # <======= change version to 2
 ```
-#### Perform rolling update
+##### Perform rolling update
 ```sh
 kubectl replace -f webserver.yml
 #---------------------------------------
 kubectl describe deployment mywebserver
-
 ```
-
 ### Rollbacks
 ```sh
 kubectl rollout history deployment
@@ -967,11 +965,6 @@ metadata:
     app: httpd
 spec:
   replicas: 2
-  # strategy: 
-  #   type: RollingUpdate
-  #   rollingUpdate:
-  #     maxSurge: 3
-  #     maxUnavailable: 4
   selector: 
     matchLabels: 
       app: httpd
@@ -1060,11 +1053,6 @@ metadata:
     app: httpd
 spec:
   replicas: 2
-  # strategy: 
-  #   type: RollingUpdate
-  #   rollingUpdate:
-  #     maxSurge: 3
-  #     maxUnavailable: 4
   selector: 
     matchLabels: 
       app: httpd
@@ -1301,7 +1289,7 @@ spec:
         - name: demovol
           hostPath:
             path: /var/lib/docker/volumes/mywebserver-vol
-            type: DirectoryOrCreate
+            type: DirectoryOrCreate # <=========== creates if not exists
         - name: demo-configmap-vol
           configMap:
             name: demo-configmap
@@ -1335,7 +1323,6 @@ kubectl get pv
 NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM              STORAGECLASS   REASON   AGE
 demo-persistent-volume                     128M       RWO            Retain           Available                                              32m
 pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            Delete           Bound       default/demo-pvc   hostpath                23m
-
 ```
 
 
