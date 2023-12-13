@@ -1264,17 +1264,79 @@ demo-pvc   Bound    pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO   
 NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM              STORAGECLASS   REASON   AGE
 demo-persistent-volume                     128M       RWO            Retain           Available                                              8m42s
 pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            Delete           Bound       default/demo-pvc   hostpath                9s
-
-
-
 ```
-
 **Usage: `webserver.yml`**
 ```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebserver
+  labels:
+    app: httpd
+spec:
+  replicas: 2
+  selector: 
+    matchLabels: 
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+        - name: myhttpd
+          image: httpd
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: demovol
+              mountPath: /data #can be any directory in the container
+            - name: demo-configmap-vol
+              mountPath: /etc/myconfigs
+            - name: my-secret # <=========== Secret mount
+              mountPath: /etc/mysecrets
+            - name: demo-pvc-vol # <=========== pvc mount
+              mountPath: /my-pvc
+      volumes:
+        - name: demovol
+          hostPath:
+            path: /var/lib/docker/volumes/mywebserver-vol
+            type: DirectoryOrCreate
+        - name: demo-configmap-vol
+          configMap:
+            name: demo-configmap
+        - name: my-secret # <=========== Secret volume
+          secret:
+            secretName: demo-secret
+        - name: demo-pvc-vol # <=========== pvc volume
+          persistentVolumeClaim: 
+            claimName: demo-pvc
+```
+**Mount PVC to pods**
+```sh
+kubectl delete -f webserver.yml
+kubectl create -f webserver.yml
 
+kubectl get all
+
+kubectl exec -it pod/mywebserver-77776946c5-gntt5 -- bash
+  root@mywebserver-77776946c5-gntt5:/usr/local/apache2# ls /my-pvc/
+  root@mywebserver-77776946c5-gntt5:/usr/local/apache2# touch /my-pvc/1.txt
+  root@mywebserver-77776946c5-gntt5:/usr/local/apache2# touch /my-pvc/2.txt
+  root@mywebserver-77776946c5-gntt5:/usr/local/apache2# touch /my-pvc/3.txt
+  root@mywebserver-77776946c5-gntt5:/usr/local/apache2# ls /my-pvc/
+  1.txt  2.txt  3.txt
+```
+**Delete all resources & see PV retain**
+```sh
+kubectl delete all --all
+
+kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM              STORAGECLASS   REASON   AGE
+demo-persistent-volume                     128M       RWO            Retain           Available                                              32m
+pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            Delete           Bound       default/demo-pvc   hostpath                23m
 
 ```
-
 
 
 

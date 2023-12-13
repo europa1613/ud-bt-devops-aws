@@ -31,6 +31,8 @@ spec:
               mountPath: /etc/myconfigs
             - name: my-secret # <=========== Secret mount
               mountPath: /etc/mysecrets
+            - name: demo-pvc-vol # <=========== pvc mount
+              mountPath: /my-pvc
       volumes:
         - name: demovol
           hostPath:
@@ -42,4 +44,7 @@ spec:
         - name: my-secret # <=========== Secret volume
           secret:
             secretName: demo-secret
+        - name: demo-pvc-vol # <=========== pvc volume
+          persistentVolumeClaim: 
+            claimName: demo-pvc
               
