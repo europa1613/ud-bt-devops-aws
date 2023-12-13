@@ -1326,7 +1326,43 @@ pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            Delete     
 ```
 
 
+### Deploying microservices to k8s
+```sh
+cd kubernetes/microservices
 
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/microservices  (main)
+ [18] → kubectl create -f mysql-configmap.yml,mysql-deploy.yml,mysql-service.yml
+  configmap/mysql-initdb-config created
+  deployment.apps/docker-mysql created
+  service/mysql-svc created
+
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/microservices  (main)
+ [20] → kubectl describe service/mysql-svc
+Name:                     mysql-svc
+Namespace:                default
+Labels:                   app=docker-mysql
+Annotations:              <none>
+Selector:                 app=docker-mysql
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.97.63.17
+IPs:                      10.97.63.17
+LoadBalancer Ingress:     localhost
+Port:                     <unset>  3306/TCP
+TargetPort:               3306/TCP
+NodePort:                 <unset>  30287/TCP
+Endpoints:                10.1.0.91:3306
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+```
+**Connecting to kube-mysql above:**
+- Open MySQL Workbench
+- Hostname: localhost or 127.0.0.1
+- Port: 30287
+- username: root
+- password: r0oT1727
 
 
 
