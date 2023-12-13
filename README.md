@@ -1035,6 +1035,87 @@ mywebserverkubehostpathvolfile.txt
 
 ```
 
+### ConfigMap
+#### demo-config-map.yml
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-configmap
+data:
+  initdb.sql:
+    select * from product;
+    create table coupon();
+  somekeys:
+    12345
+    CADBNAT
+```
+#### webserver.yml
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebserver
+  labels:
+    app: httpd
+spec:
+  replicas: 2
+  # strategy: 
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 3
+  #     maxUnavailable: 4
+  selector: 
+    matchLabels: 
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+        - name: myhttpd
+          image: httpd
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: demovol
+              mountPath: /data #can be any directory in the container
+            -name: demo-configmap-vol
+              mountPath: /etc/myconfigs
+      volumes:
+        - name: demovol
+          hostPath:
+            path: /var/lib/docker/volumes/mywebserver-vol
+            type: DirectoryOrCreate
+        - name: demo-configmap-vol
+          configMap:
+            name: demo-configmap # same name as the demo-config-map.yml -> metadata -> name            
+```
+
+```sh
+cd kubernetes/webserver
+kubectl detele -f webserver.yml
+
+kubectl create -f demo-config-map.yml
+[71] → kubectl get configmaps
+NAME               DATA   AGE
+demo-configmap     2      8s
+
+kubectl create -f webserver.yml
+
+[74] → kubectl exec -it pod/mywebserver-9fd8cdb67-28zwr -- bash
+root@mywebserver-9fd8cdb67-28zwr:/usr/local/apache2# ls -ll /etc/myconfigs/
+total 0
+lrwxrwxrwx 1 root root 17 Dec 13 03:03 initdb.sql -> ..data/initdb.sql
+lrwxrwxrwx 1 root root 15 Dec 13 03:03 somekeys -> ..data/somekeys
+
+root@mywebserver-9fd8cdb67-28zwr:/usr/local/apache2# cat /etc/myconfigs/*
+select * from product; create table coupon();12345 CADBNAT
+root@mywebserver-9fd8cdb67-28zwr:/usr/local/apache2#
+
+```
+
 
 
 

@@ -27,9 +27,14 @@ spec:
           volumeMounts:
             - name: demovol
               mountPath: /data #can be any directory in the container
+            - name: demo-configmap-vol
+              mountPath: /etc/myconfigs
       volumes:
         - name: demovol
           hostPath:
             path: /var/lib/docker/volumes/mywebserver-vol
             type: DirectoryOrCreate
+        - name: demo-configmap-vol
+          configMap:
+            name: demo-configmap
               
