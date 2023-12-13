@@ -1198,4 +1198,64 @@ root@mywebserver-5f7d86d44-8bbjb:/etc/mysecrets# cat password username
   test_user
 ```
 
+### Persistent Volume & Persistent Volume Claim
+Persistent Volume is a k8s resource, that is used to allocate storage space/volume on the cluster. Lives as long as the cluster.
+Persistent Volume Claim is a k8s resource that is used to claim/mount/use certain space/volume of a Persistent Volume.
+
+**Access Modes:**
+- ReadWriteOnce
+- ReadOnlyMany
+- ReadWriteMany
+
+**Persistent Volume**
+```yml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: demo-persistent-volume
+spec:
+  capacity:
+    storage: 128M
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/demo-pv
+```
+**Create PV**
+```sh
+[88] → kubectl get pv
+No resources found
+
+kubectl create -f demo-persistent-volume.yml
+
+kubectl describe pv demo-persistent-volume
+
+[92] → kubectl get pv
+NAME                     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+demo-persistent-volume   128M       RWO            Retain           Available                                   2m17s
+
+```
+**Persistent Volume Claim**
+```yml
+
+
+```
+**Usage: `webserver.yml`**
+```yml
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
