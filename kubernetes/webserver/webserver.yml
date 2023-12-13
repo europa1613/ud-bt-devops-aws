@@ -29,6 +29,8 @@ spec:
               mountPath: /data #can be any directory in the container
             - name: demo-configmap-vol
               mountPath: /etc/myconfigs
+            - name: my-secret # <=========== Secret mount
+              mountPath: /etc/mysecrets
       volumes:
         - name: demovol
           hostPath:
@@ -37,4 +39,7 @@ spec:
         - name: demo-configmap-vol
           configMap:
             name: demo-configmap
+        - name: my-secret # <=========== Secret volume
+          secret:
+            secretName: demo-secret
               

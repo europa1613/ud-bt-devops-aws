@@ -1116,10 +1116,86 @@ root@mywebserver-9fd8cdb67-28zwr:/usr/local/apache2#
 
 ```
 
+### Secrets
+Kubernetes stores secrets in a tmpf folder on the Node and can only be requested by the Pods.
+**Get base64 encoded secrets**
+```sh
+echo "test_user" | base64
+echo "test_pass" | base64
+```
+**demo-secret.yml**
+```yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: demo-secret
+type: Opaque
+data:
+  username:
+    dGVzdF91c2VyCg==
+  password:
+    dGVzdF9wYXNzCg==
+```
+```sh
+kubectl create -f demo-secret.yml
+kubectl get secret
+NAME          TYPE     DATA   AGE
+demo-secret   Opaque   2      5s
+```
+#### Use Secrets in `webserver.yml`
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebserver
+  labels:
+    app: httpd
+spec:
+  replicas: 2
+  selector: 
+    matchLabels: 
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+        - name: myhttpd
+          image: httpd
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: demovol
+              mountPath: /data #can be any directory in the container
+            - name: demo-configmap-vol
+              mountPath: /etc/myconfigs
+            - name: my-secret # <=========== Secret mount
+              mountPath: /etc/mysecrets
+      volumes:
+        - name: demovol
+          hostPath:
+            path: /var/lib/docker/volumes/mywebserver-vol
+            type: DirectoryOrCreate
+        - name: demo-configmap-vol
+          configMap:
+            name: demo-configmap
+        - name: my-secret # <=========== Secret volume
+          secret:
+            secretName: demo-secret
+              
 
+```
 
-
-
-
+**Verify in the Pod**
+```sh
+[87] → kubectl exec -it pod/mywebserver-5f7d86d44-8bbjb -- bash
+root@mywebserver-5f7d86d44-8bbjb:/usr/local/apache2# cd /etc/mysecrets
+root@mywebserver-5f7d86d44-8bbjb:/etc/mysecrets# ls
+  password  username
+root@mywebserver-5f7d86d44-8bbjb:/etc/mysecrets# cat password username
+  test_pass
+  test_user
+```
 
 
