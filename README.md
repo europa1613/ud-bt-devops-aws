@@ -462,21 +462,21 @@ ENV myenv myval
 # Change Docker file like below
 
 [root@ip-172-31-18-126 ~]# cat Dockerfile
-FROM centos
+  FROM centos
 
-RUN cd /etc/yum.repos.d/
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+  RUN cd /etc/yum.repos.d/
+  RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+  RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
 
-RUN yum install -y httpd
+  RUN yum install -y httpd
 
-ADD index.html /var/www/html
-CMD apachectl -D FOREGROUND
-EXPOSE 80
+  ADD index.html /var/www/html
+  CMD apachectl -D FOREGROUND
+  EXPOSE 80
 
-MAINTAINER arvind
-ENV myenv myval
+  MAINTAINER arvind
+  ENV myenv myval
 
 docker build -t my-docfile-webserver . # successful
 
@@ -934,11 +934,106 @@ kubectl rollout undo deployment mywebserver --to-revision=1
 kubectl rollout --help
 ```
 
-### Manual Scaling
+#### Manual Scaling
 ```sh
 kubectl scale deployment mywebserver --replicas=20
 ```
 
+### Volumes
+- emptyDir
+- nfs
+- hostPath
+- Config Map
+- Secrets
+
+**Note:** Config Map and Secrets are objects in k8s, but internally these are volumes.
+
+
+#### Accessing a hostPath volume mounted using docker-desktop on macOS
+**Refer:** https://forums.docker.com/t/var-lib-docker-does-not-exist-on-host/18314/5
+**Background:**
+`/var/lib/docker/`is not accessible on macOS, as the host node for kubernetes using docker-desktop is not mac but a intermediate vm.
+
+So if a Pod mounts a hostPath, we can access it my running a container by mounting that Pod's hostPath mount.
+
+##### Kube Deployment manifest
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mywebserver
+  labels:
+    app: httpd
+spec:
+  replicas: 2
+  # strategy: 
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 3
+  #     maxUnavailable: 4
+  selector: 
+    matchLabels: 
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+        - name: myhttpd
+          image: httpd
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: demovol
+              mountPath: /data #can be any directory in the container
+      volumes:
+        - name: demovol
+          hostPath:
+            path: /var/lib/docker/volumes/mywebserver-vol
+            type: DirectoryOrCreate
+```
+
+##### Create Deployment
+
+```sh
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/webserver  (main)
+ [60] → kubectl create -f webserver.yml
+
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/webserver  (main)
+ [59] → kubectl get all
+NAME                              READY   STATUS    RESTARTS   AGE
+pod/mywebserver-5c9595654-7kp8k   1/1     Running   0          27m
+pod/mywebserver-5c9595654-z46zk   1/1     Running   0          27m
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   5d
+
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mywebserver   2/2     2            2           27m
+
+NAME                                    DESIRED   CURRENT   READY   AGE
+replicaset.apps/mywebserver-5c9595654   2         2         2       27m
+
+
+################################################
+
+# corresponding docker containers to pod-containers of kube
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/webserver  (main)
+ [61] → docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED             STATUS             PORTS     NAMES
+90bbe74c4069   httpd                    "httpd-foreground"       About an hour ago   Up About an hour             k8s_myhttpd_mywebserver-5c9595654-7kp8k_default_098b6b3e-687c-4ce8-927f-be64727ae02e_0
+b6d789a6151d   httpd                    "httpd-foreground"       About an hour ago   Up About an hour             k8s_myhttpd_mywebserver-5c9595654-z46zk_default_aed1ca8f-bd1e-46ed-a5c6-687febce383f_0
+
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/webserver  (main)
+ [64] → docker run --rm --volumes-from 90bbe74c4069 ubuntu ls /data         # <=========== this container mount itself
+index.html
+mywebserverkubehostpathvolfile.txt
+
+# SEEMS LIKE NO WAY TO GET INTO THE VM NODE 
+
+```
 
 
 

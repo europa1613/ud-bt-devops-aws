@@ -5,12 +5,12 @@ metadata:
   labels:
     app: httpd
 spec:
-  replicas: 10
-  strategy: 
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 3
-      maxUnavailable: 4
+  replicas: 2
+  # strategy: 
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 3
+  #     maxUnavailable: 4
   selector: 
     matchLabels: 
       app: httpd
@@ -21,7 +21,15 @@ spec:
     spec:
       containers:
         - name: myhttpd
-          image: httpd:2
+          image: httpd
           ports:
             - containerPort: 80
+          volumeMounts:
+            - name: demovol
+              mountPath: /data #can be any directory in the container
+      volumes:
+        - name: demovol
+          hostPath:
+            path: /var/lib/docker/volumes/mywebserver-vol
+            type: DirectoryOrCreate
               
