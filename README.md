@@ -1237,9 +1237,38 @@ demo-persistent-volume   128M       RWO            Retain           Available   
 ```
 **Persistent Volume Claim**
 ```yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-pvc
+spec:
+  resources:
+    requests:
+      storage: 64M 
+  accessModes:
+    - ReadWriteOnce
+```
+**Create PVC**
+```sh
+ [95] → kubectl get pvc
+No resources found in default namespace.
+
+[96] → kubectl create -f demo-persistent-volume-claim.yml
+persistentvolumeclaim/demo-pvc created
+
+ [97] → kubectl get pvc
+NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+demo-pvc   Bound    pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            hostpath       3s
+
+ [98] → kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM              STORAGECLASS   REASON   AGE
+demo-persistent-volume                     128M       RWO            Retain           Available                                              8m42s
+pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            Delete           Bound       default/demo-pvc   hostpath                9s
+
 
 
 ```
+
 **Usage: `webserver.yml`**
 ```yml
 
