@@ -1,0 +1,305 @@
+{
+	"info": {
+		"_postman_id": "307823f0-8ca6-4eda-8dc4-22888c782182",
+		"name": "ud-bt-devops-aws",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1316559"
+	},
+	"item": [
+		{
+			"name": "coupon-post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"SUPERSALE\",\n    \"discount\": 10,\n    \"expDate\": \"12/12/2023\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9091/couponapi/coupons",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"couponapi",
+						"coupons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9091/couponapi/coupons/SUPERSALE",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"couponapi",
+						"coupons",
+						"SUPERSALE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product-post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"MacBook Pro 16\",\n    \"description\": \"A laptop by Apple Inc\",\n    \"price\": 3500,\n    \"couponCode\": \"SUPERSALE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9090/productapi/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"productapi",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-post-ec2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"5OFF\",\n    \"discount\": 5,\n    \"expDate\": \"12/12/2023\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ec2-18-118-109-118.us-east-2.compute.amazonaws.com:9091/couponapi/coupons",
+					"protocol": "http",
+					"host": [
+						"ec2-18-118-109-118",
+						"us-east-2",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "9091",
+					"path": [
+						"couponapi",
+						"coupons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-get-ec2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ec2-18-118-109-118.us-east-2.compute.amazonaws.com:9091/couponapi/coupons/5OFF",
+					"protocol": "http",
+					"host": [
+						"ec2-18-118-109-118",
+						"us-east-2",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"port": "9091",
+					"path": [
+						"couponapi",
+						"coupons",
+						"5OFF"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-post-docker",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"SUPERSALE\",\n    \"discount\": 10,\n    \"expDate\": \"12/12/2023\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:10555/couponapi/coupons",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10555",
+					"path": [
+						"couponapi",
+						"coupons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-get-docker",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:10555/couponapi/coupons/SUPERSALE",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10555",
+					"path": [
+						"couponapi",
+						"coupons",
+						"SUPERSALE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product-post-docker",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"MacBook Pro 16\",\n    \"description\": \"A laptop by Apple Inc\",\n    \"price\": 3500,\n    \"couponCode\": \"SUPERSALE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:10666/productapi/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10666",
+					"path": [
+						"productapi",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-post-k8s",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"code\": \"SUPERSALE\",\n    \"discount\": 10,\n    \"expDate\": \"12/12/2023\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:30288/couponapi/coupons",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30288",
+					"path": [
+						"couponapi",
+						"coupons"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "coupon-get-k8s",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:30288/couponapi/coupons/SUPERSALE",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30288",
+					"path": [
+						"couponapi",
+						"coupons",
+						"SUPERSALE"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product-post-k8s",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"MacBook Pro 16\",\n    \"description\": \"A laptop by Apple Inc\",\n    \"price\": 3500,\n    \"couponCode\": \"SUPERSALE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:30289/productapi/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "30289",
+					"path": [
+						"productapi",
+						"products"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1327,9 +1327,13 @@ pvc-7e8ee168-0a54-4c10-9da7-35d381ed958c   64M        RWO            Delete     
 
 
 ### Deploying microservices to k8s
+**Note:**
+Unlike minikube, all k8s services created with Docker Desktop can be accessed from localhost.
 ```sh
 cd kubernetes/microservices
-
+```
+#### Deploy mysql
+```sh
 arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/microservices  (main)
  [18] → kubectl create -f mysql-configmap.yml,mysql-deploy.yml,mysql-service.yml
   configmap/mysql-initdb-config created
@@ -1364,7 +1368,60 @@ Events:                   <none>
 - username: root
 - password: r0oT1727
 
+#### Deploy Apps
+**Note:**
+k8s Service names: metadata -> name are used for communicating between pods/services.
+```sh
+kubectl create -f coupon-app-deploy.yml,coupon-app-svc.yml,product-app-deploy.yml,product-app-svc.yml
 
+arvins-mac @ ~/1-gitspace/ud-bt-devops-aws/kubernetes/microservices  (main)
+ [51] → kubectl get all
+NAME                                READY   STATUS    RESTARTS        AGE
+pod/coupon-app-597865b498-vr74k     1/1     Running   7 (9m11s ago)   15m
+pod/docker-mysql-798b8c9974-tjh9g   1/1     Running   0               55m
+pod/product-app-7f58489fd4-mwxdx    1/1     Running   7 (8m39s ago)   15m
+
+NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+service/coupon-app        NodePort    10.101.104.40   <none>        9091:30288/TCP   19s
+service/docker-mysql      NodePort    10.109.88.37    <none>        3306:30287/TCP   4m50s
+service/kubernetes        ClusterIP   10.96.0.1       <none>        443/TCP          55m
+service/product-app-svc   NodePort    10.111.5.48     <none>        9090:30289/TCP   15m
+
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/coupon-app     1/1     1            1           15m
+deployment.apps/docker-mysql   1/1     1            1           55m
+deployment.apps/product-app    1/1     1            1           15m
+
+NAME                                      DESIRED   CURRENT   READY   AGE
+replicaset.apps/coupon-app-597865b498     1         1         1       15m
+replicaset.apps/docker-mysql-798b8c9974   1         1         1       55m
+replicaset.apps/product-app-7f58489fd4    1         1         1       15m
+
+```
+
+#### Test
+**Postman Collection** [here](ud-bt-devops-aws.postman_collection.json)
+```sh
+curl --location 'http://localhost:30288/couponapi/coupons' \
+--header 'Content-Type: application/json' \
+--data '{
+    "code": "SUPERSALE",
+    "discount": 10,
+    "expDate": "12/12/2023"
+}'
+
+curl --location 'http://localhost:30288/couponapi/coupons/SUPERSALE'
+
+curl --location 'http://localhost:30289/productapi/products' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name": "MacBook Pro 16",
+    "description": "A laptop by Apple Inc",
+    "price": 3500,
+    "couponCode": "SUPERSALE"
+}'
+
+```
 
 
 
