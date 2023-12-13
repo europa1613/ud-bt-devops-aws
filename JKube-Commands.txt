@@ -1,0 +1,93 @@
+JKube Docs:
+
+https://www.eclipse.org/jkube/docs
+
+Maven Repo:
+
+https://mvnrepository.com/artifact/org.eclipse.jkube/jkube
+
+
+Use Plugin:
+
+<plugin>
+	<groupId>org.eclipse.jkube</groupId>
+	<artifactId>kubernetes-maven-plugin</artifactId>
+	<version>1.0.0-rc-1</version>
+</plugin>
+
+
+Build Docker images:
+
+mvn k8s:build
+
+docker login
+
+mvn k8s:push
+
+
+
+Setup Minikube and Docker:
+
+minikube status
+
+minikube start
+
+kubectl get pods -w
+
+kubectl cluster-info
+
+minikube docker-env
+
+eval $(minikube -p minikube docker-env)
+
+
+Generate Kubernetes Resource manifests:
+
+mvn k8s:resource
+
+
+Apply resources to cluster:
+
+mvn k8s:apply
+
+
+Test:
+
+kubectl get pods -w
+
+kubectl get svc
+
+minikube ssh
+
+curl <ip>:<port>
+
+update properties in pom.xml
+
+<properties>
+	<java.version>1.8</java.version>
+	<jkube.enricher.jkube-service.type>NodePort</jkube.enricher.jkube-service.type>
+</properties>
+
+
+Change Service type to NodePort:
+
+<jkube.enricher.jkube-service.type>NodePort</jkube.enricher.jkube-service.type>
+
+minikube ip
+
+curl <ip>:<port>
+
+
+Access Logs:
+
+k8s:logs
+
+
+Debug:
+
+mvn k8s:debug
+
+
+Undeploy:
+
+mvn k8s:undeploy
