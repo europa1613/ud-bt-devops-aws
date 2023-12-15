@@ -1,0 +1,97 @@
+- hosts: agent1
+  vars:
+    msg: "Hello Ansible"
+  tasks:
+    - name: Test
+      copy:
+        dest: /root/abc.txt
+        content: "{{msg}}"
+#
+# save as hello-playbook.yml
+# RUN
+# $ ansible-playbook hello-playbook.yml
+#
+#-----------------------------------------------------------------------
+- hosts: agent1
+  tasks:
+          - name: create directories if they do not exist
+            file:
+                    path: "{{item}}"
+                    state: directory
+            with_items:
+                    - dir1
+                    - dir2
+#
+# save as loop.yml 
+# with_items is a loop in ansible
+# RUN
+# $ ansible-playbook loop.yml
+#
+#-----------------------------------------------------------------------
+
+- hosts: agent1
+  tasks:
+          - name: install packages
+            apt:
+                    name:
+                            - git
+                            - mysql-server
+                    update_cache: yes
+
+#
+# save as packages.yml
+# RUN
+# $ apt-get remove git
+# $ ansible-playbook packages.yml
+#
+#-----------------------------------------------------------------------
+
+- hosts: agent1
+  tasks:
+          - name: install packages
+            apt:
+                    name:
+                            - git
+                            - mysql-server
+                    update_cache: yes
+          - name: Start MySQL
+            service: name=msql state=started
+#
+# save as packages-start.yml
+# RUN
+# $ apt-get remove git
+# $ apt-get remove mysql-server
+# $ ansible-playbook packages-start.yml
+#
+#-----------------------------------------------------------------------
+## TAGS
+- hosts: agent1
+  tasks:
+          - name: install packages
+            apt:
+                    name:
+                            - git
+                            - mysql-server
+                    update_cache: yes
+            tags: 
+                    - install
+          - name: Start MySQL
+            service: name=msql state=started
+            tags:
+                    - startmysql
+
+#
+# save as packages-start-with-tags.yml
+# RUN
+# $ apt-get remove git
+# $ apt-get remove mysql-server
+# $ ansible-playbook packages-start-with-tags.yml --tags "startmysql"
+# $ ansible-playbook packages-start-with-tags.yml --skip-tags "install"  #to skip tags
+#
+#-----------------------------------------------------------------------
+# Defaults TAGS
+# always -- unless skipped manually
+# never -- unless run manually
+#-----------------------------------------------------------------------
+
+
